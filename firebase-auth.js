@@ -82,6 +82,7 @@ if (loginForm) {
     setMessage(status, 'กำลังเข้าสู่ระบบ...');
     try {
       await signInWithEmailAndPassword(auth, toEmail(username.value), password.value);
+      localStorage.setItem('shopflowUsername', username.value.trim());
       setMessage(status, 'เข้าสู่ระบบสำเร็จ');
       setTimeout(() => {
         window.location.href = 'index.html';

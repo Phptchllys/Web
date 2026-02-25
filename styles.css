@@ -65,6 +65,8 @@ input, select, textarea { width: 100%; border: 1px solid #d7d7d7; border-radius:
 .home-head { color: #fff; background: linear-gradient(#fc4128, #ee4d2d); }
 .top-strip { padding: 7px 0; font-size: 12px; display: flex; justify-content: space-between; gap: 20px; }
 .top-strip .row { display: flex; gap: 14px; align-items: center; }
+.top-user-row { justify-content: flex-end; }
+.user-greeting { font-weight: 700; color: #fff; }
 .search-row { display: grid; grid-template-columns: 200px 1fr 44px; align-items: center; gap: 16px; padding-bottom: 12px; }
 .brand-home { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 700; }
 .search-box { background: #fff; border-radius: 2px; padding: 3px; display: flex; }

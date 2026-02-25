@@ -1,4 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
   getFirestore,
   addDoc,
@@ -25,6 +26,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 const ASYNC_TIMEOUT_MS = 12000;
 
 const cart = new Map();
@@ -53,6 +55,34 @@ const parseError = (err) => {
 };
 
 const money = (n) => `฿${Number(n || 0).toLocaleString('th-TH')}`;
+
+const getUsernameFromUser = (user) => {
+  if (!user?.email) return '';
+  return user.email.split('@')[0] || '';
+};
+
+const syncTopbarUser = (user = null) => {
+  const greetingEl = document.getElementById('user-greeting');
+  const loginLink = document.getElementById('login-link');
+  const registerLink = document.getElementById('register-link');
+  if (!greetingEl) return;
+
+  const savedUsername = localStorage.getItem('shopflowUsername') || '';
+  const username = (savedUsername || getUsernameFromUser(user)).trim();
+
+  if (!username) {
+    greetingEl.hidden = true;
+    greetingEl.textContent = '';
+    loginLink?.removeAttribute('hidden');
+    registerLink?.removeAttribute('hidden');
+    return;
+  }
+
+  greetingEl.hidden = false;
+  greetingEl.textContent = `สวัสดี, ${username}`;
+  loginLink?.setAttribute('hidden', 'hidden');
+  registerLink?.setAttribute('hidden', 'hidden');
+};
 
 const renderCart = () => {
   const cartItemsEl = document.getElementById('cart-items');
@@ -286,5 +316,10 @@ if (productsContainer) {
   );
 }
 
+onAuthStateChanged(auth, (user) => {
+  syncTopbarUser(user);
+});
+
 setupCheckout();
 renderCart();
+syncTopbarUser();

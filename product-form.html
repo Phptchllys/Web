@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopFlow | ฟอร์มสินค้า</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="simple-nav">
+      <div class="container inner">
+        <a class="brand-row" href="index.html"><span class="bag-icon">S</span><span>Shopee Forms</span></a>
+        <nav>
+          <a href="index.html">หน้าแรก</a><a href="login.html">เข้าสู่ระบบ</a><a href="register.html">สมัครใหม่</a><a class="active" href="product-form.html">ฟอร์มสินค้า</a><a href="order-form.html">ฟอร์มคำสั่งซื้อ</a><a href="tech-stack.html">Tech Stack</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container page">
+      <h1>ฟอร์มลงสินค้า</h1>
+      <p class="lead">เตรียมข้อมูลสำหรับเก็บใน Firestore และแสดงรูปสินค้าที่หน้าแรก</p>
+      <section class="card">
+        <form class="form-grid" id="product-form">
+          <label><span>ชื่อสินค้า</span><input id="product-name" type="text" required /></label>
+          <label><span>หมวดหมู่</span><select id="product-category"><option>แฟชั่น</option><option>อิเล็กทรอนิกส์</option><option>บ้านและสวน</option></select></label>
+          <label><span>ราคา (บาท)</span><input id="product-price" type="number" min="0" required /></label>
+          <label><span>สต็อกคงเหลือ</span><input id="product-stock" type="number" min="0" required /></label>
+          <label class="full"><span>รายละเอียดสินค้า</span><textarea id="product-description" rows="4"></textarea></label>
+          <label class="full"><span>ลิงก์รูปภาพสินค้า (URL)</span><input id="product-image-url" type="url" placeholder="https://..." /></label>
+          <button class="btn-primary full" type="submit">บันทึกสินค้า</button>
+        </form>
+        <p id="product-status" class="status-message"></p>
+
+      </section>
+    </main>
+    <script type="module" src="firebase-products.js"></script>
+  </body>
+</html>

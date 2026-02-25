@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopFlow | สมัครใหม่</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="auth-top">
+      <div class="container auth-top-inner">
+        <a class="brand-auth" href="index.html"><span class="bag-icon">S</span><span class="brand">Shopee</span><span class="page">สมัครใหม่</span></a>
+        <a class="help-link" href="#">ต้องการความช่วยเหลือ?</a>
+      </div>
+    </header>
+
+    <section class="auth-hero">
+      <div class="container auth-grid">
+        <div class="auth-left">
+          <div class="big-bag">S</div>
+          <div class="logo">Shopee</div>
+          <p>แหล่งช้อปปิ้งออนไลน์ที่ใหญ่ที่สุด<br />ในเอเชียตะวันออกเฉียงใต้และไต้หวัน</p>
+        </div>
+        <div class="auth-card">
+          <h2>สมัครใหม่</h2>
+          <form id="register-form">
+            <div class="input-wrap"><input id="register-username" type="text" placeholder="ชื่อผู้ใช้" required /></div>
+            <div class="input-wrap"><input id="register-password" type="password" placeholder="รหัสผ่าน" required /></div>
+            <div class="input-wrap"><input id="register-confirm-password" type="password" placeholder="ยืนยันรหัสผ่าน" required /></div>
+            <button class="btn-primary" type="submit">สมัครสมาชิก</button>
+          </form>
+          <p id="register-status" class="status-message"></p>
+          <div class="auth-note" style="color:#666;">โดยการเปิดบัญชีท่านยอมรับ <a href="#">เงื่อนไขการให้บริการ</a> และ <a href="#">นโยบายความเป็นส่วนตัว</a></div>
+          <div class="auth-note">หากมีบัญชีอยู่แล้ว <a href="login.html">เข้าสู่ระบบ</a></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div><h4>ศูนย์ช่วยเหลือ</h4><ul><li>Help Centre</li><li>สั่งซื้อสินค้าอย่างไร</li><li>เริ่มขายสินค้ายังไง</li><li>ช่องทางการชำระเงิน</li></ul></div>
+        <div><h4>เกี่ยวกับ SHOPEE</h4><ul><li>เกี่ยวกับเรา</li><li>โปรแกรม Affiliate</li><li>ร่วมงานกับเรา</li><li>นโยบาย</li></ul></div>
+        <div><h4>วิธีการชำระเงิน</h4><div class="pay-grid"><div class="pay-box"></div><div class="pay-box"></div><div class="pay-box"></div><div class="pay-box"></div><div class="pay-box"></div><div class="pay-box"></div></div></div>
+        <div><h4>ติดตามเรา</h4><ul><li>Facebook</li><li>Instagram</li><li>Line</li><li>LinkedIn</li></ul></div>
+        <div><h4>ไปหน้าฟอร์ม</h4><ul><li><a href="product-form.html">ฟอร์มสินค้า</a></li><li><a href="order-form.html">ฟอร์มคำสั่งซื้อ</a></li><li><a href="tech-stack.html">Tech Stack</a></li></ul></div>
+      </div>
+    </footer>
+    <script type="module" src="firebase-auth.js"></script>
+  </body>
+</html>

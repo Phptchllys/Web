@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopFlow | ฟอร์มคำสั่งซื้อ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="simple-nav">
+      <div class="container inner">
+        <a class="brand-row" href="index.html"><span class="bag-icon">S</span><span>Shopee Forms</span></a>
+        <nav>
+          <a href="index.html">หน้าแรก</a><a href="login.html">เข้าสู่ระบบ</a><a href="register.html">สมัครใหม่</a><a href="product-form.html">ฟอร์มสินค้า</a><a class="active" href="order-form.html">ฟอร์มคำสั่งซื้อ</a><a href="tech-stack.html">Tech Stack</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container page">
+      <h1>ฟอร์มคำสั่งซื้อ</h1>
+      <p class="lead">เตรียมบันทึกคำสั่งซื้อแบบ Realtime ผ่าน Firestore/Realtime Database (NoSQL)</p>
+      <section class="card">
+        <form class="form-grid">
+          <label><span>รหัสคำสั่งซื้อ</span><input type="text" placeholder="ORD-0001" /></label>
+          <label><span>ชื่อลูกค้า</span><input type="text" /></label>
+          <label><span>เบอร์โทร</span><input type="tel" /></label>
+          <label><span>ช่องทางชำระเงิน</span><select><option>PromptPay</option><option>บัตรเครดิต</option><option>เก็บเงินปลายทาง</option></select></label>
+          <label class="full"><span>ที่อยู่จัดส่ง</span><textarea rows="3"></textarea></label>
+          <label><span>สถานะออเดอร์</span><select><option>รอชำระเงิน</option><option>กำลังจัดส่ง</option><option>สำเร็จ</option></select></label>
+          <label><span>วันที่สั่งซื้อ</span><input type="date" /></label>
+          <button class="btn-primary full" type="button">ยืนยันคำสั่งซื้อ</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

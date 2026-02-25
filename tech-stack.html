@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopFlow | Tech Stack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="simple-nav">
+      <div class="container inner">
+        <a class="brand-row" href="index.html"><span class="bag-icon">S</span><span>Shopee Forms</span></a>
+        <nav>
+          <a href="index.html">หน้าแรก</a><a href="login.html">เข้าสู่ระบบ</a><a href="register.html">สมัครใหม่</a><a href="product-form.html">ฟอร์มสินค้า</a><a href="order-form.html">ฟอร์มคำสั่งซื้อ</a><a class="active" href="tech-stack.html">Tech Stack</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container page">
+      <h1>แผนพัฒนาระบบ</h1>
+      <p class="lead">ตามที่กำหนด: React + Firebase Hosting + Firebase Authentication + Firestore/Realtime Database + Cloud Storage</p>
+      <section class="stack-grid">
+        <article class="stack-item"><h3>1) React</h3><p>พัฒนา UI เป็น Components เช่น LoginPage, RegisterPage, ProductForm, OrderForm เพื่อบริหาร state และ routing ได้ง่าย</p></article>
+        <article class="stack-item"><h3>2) Firebase Hosting</h3><p>นำแอป React ที่ build แล้วขึ้นระบบจริง (Production) พร้อม HTTPS และรองรับ deployment workflow</p></article>
+        <article class="stack-item"><h3>3) Firebase Authentication</h3><p>รองรับ สมัครสมาชิก / เข้าระบบ / ลืมรหัสผ่าน และสามารถขยาย social login ได้</p></article>
+        <article class="stack-item"><h3>4) Firestore / Realtime Database</h3><p>ใช้ฐานข้อมูล NoSQL เก็บข้อมูลสินค้า คำสั่งซื้อ และข้อมูลผู้ใช้แบบเรียลไทม์</p></article>
+        <article class="stack-item"><h3>5) Firebase Cloud Storage</h3><p>ใช้อัปโหลดและจัดเก็บรูปภาพ เอกสาร และไฟล์ต่าง ๆ ที่แนบกับสินค้า/คำสั่งซื้อ</p></article>
+        <article class="stack-item"><h3>เชื่อมต่อพร้อมใช้งานในหน้า Login/Register</h3><p>หน้า <code>login.html</code> และ <code>register.html</code> เชื่อมกับ Firebase Authentication ผ่านไฟล์ <code>firebase-auth.js</code> แล้ว เหลือเพียงใส่ค่า Firebase Config จริงก่อนใช้งาน</p></article>
+      </section>
+    </main>
+  </body>
+</html>

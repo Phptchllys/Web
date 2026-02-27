@@ -13,14 +13,29 @@ import {
   runTransaction,
   serverTimestamp,
   writeBatch,
+  where,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { auth, db } from './firebase-config.js';
 
 const money = (n) => `฿${Number(n || 0).toLocaleString('th-TH')}`;
+const escapeHtml = (value) =>
+  String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+const formatDateTime = (value) => {
+  if (!value) return '-';
+  const date = typeof value.toDate === 'function' ? value.toDate() : new Date(value);
+  if (Number.isNaN(date.getTime())) return '-';
+  return date.toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+};
 const SHIPPING_FLAT = 50;
 const VAT_RATE = 0.07;
 const cart = new Map();
 let productsCache = [];
+let ordersUnsubscribe = null;
 
 const setStatus = (id, msg, isError = false) => {
   const el = document.getElementById(id);
@@ -366,6 +381,74 @@ const setupProductForm = () => {
   });
 };
 
+const setupUserOrders = (user) => {
+  const list = document.getElementById('user-orders-list');
+  if (!list) return;
+
+  if (ordersUnsubscribe) {
+    ordersUnsubscribe();
+    ordersUnsubscribe = null;
+  }
+
+  if (!user) {
+    list.innerHTML = '<div class="empty-products">กรุณาเข้าสู่ระบบเพื่อดูออเดอร์ของคุณ</div>';
+    return;
+  }
+
+  const renderOrders = (snapshot) => {
+    if (snapshot.empty) {
+      list.innerHTML = '<div class="empty-products">ยังไม่มีออเดอร์ของคุณ</div>';
+      return;
+    }
+
+    list.innerHTML = snapshot.docs
+      .map((docSnap) => {
+        const order = docSnap.data();
+        const items = Array.isArray(order.items) ? order.items : [];
+        const itemSummary = items.length
+          ? items
+              .slice(0, 3)
+              .map((item) => `${escapeHtml(item?.name || '-')} x${Number(item?.qty || 0)}`)
+              .join(', ')
+          : 'ไม่มีรายการสินค้า';
+        const subtotal = Number(order.subtotal ?? order.total ?? 0);
+        const shipping = Number(order.shipping ?? 0);
+        const vat = Number(order.vat ?? 0);
+        const total = Number(order.total ?? subtotal + shipping + vat);
+
+        return `
+          <div class="cart-item">
+            <div>
+              <div class="cart-name">ออเดอร์ #${docSnap.id}</div>
+              <div class="cart-meta">วันที่สั่งซื้อ: ${formatDateTime(order.createdAt)}</div>
+              <div class="cart-meta">ชำระเงิน: ${escapeHtml(order.paymentMethod || '-')} • ยอดรวม ${money(total)}</div>
+              <div class="cart-meta">ยอดสินค้า ${money(subtotal)} • ค่าส่ง ${money(shipping)} • VAT ${money(vat)}</div>
+              <div class="cart-meta">รายการ: ${itemSummary}${items.length > 3 ? ` และอีก ${items.length - 3} รายการ` : ''}</div>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+  };
+
+  const q = query(collection(db, 'orders'), where('userId', '==', user.uid), orderBy('createdAt', 'desc'), limit(20));
+  ordersUnsubscribe = onSnapshot(
+    q,
+    renderOrders,
+    (err) => {
+      if (String(err?.message || '').includes('index') || String(err?.message || '').includes('createdAt')) {
+        const fallbackQuery = query(collection(db, 'orders'), where('userId', '==', user.uid), limit(20));
+        ordersUnsubscribe = onSnapshot(fallbackQuery, renderOrders, (fallbackErr) => {
+          list.innerHTML = `<div class="empty-products">โหลดออเดอร์ไม่สำเร็จ: ${parseError(fallbackErr)}</div>`;
+        });
+        return;
+      }
+
+      list.innerHTML = `<div class="empty-products">โหลดออเดอร์ไม่สำเร็จ: ${parseError(err)}</div>`;
+    }
+  );
+};
+
 const setupOrdersPage = async () => {
   const tableBody = document.getElementById('orders-tbody');
   if (!tableBody) return;
@@ -452,6 +535,7 @@ const setupRealtimeProducts = () => {
 onAuthStateChanged(auth, async (user) => {
   await enforcePageAccess(user);
   syncTopbarUser(user);
+    setupUserOrders(user);
 });
 
 setupCheckout();

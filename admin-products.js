@@ -23,6 +23,25 @@ const setStatus = (message, isError = false) => {
 
 const money = (n) => `฿${Number(n || 0).toLocaleString('th-TH')}`;
 
+const escapeHtml = (value) =>
+  String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+
+const formatDateTime = (value) => {
+  if (!value) return '-';
+  const date = typeof value.toDate === 'function' ? value.toDate() : new Date(value);
+  if (Number.isNaN(date.getTime())) return '-';
+
+  return date.toLocaleString('th-TH', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+};
+
 const getRole = async (uid) => {
   const snap = await getDoc(doc(db, 'users', uid));
   if (!snap.exists()) return null;
@@ -48,8 +67,8 @@ const renderList = () => {
           return `
             <div class="cart-item">
               <div>
-                <div class="cart-name">${p.name || '-'}</div>
-                <div class="cart-meta">${p.category || '-'} • ${money(p.price || 0)} • คงเหลือ ${p.stock ?? 0}</div>
+                <div class="cart-name">${escapeHtml(p.name || '-')}</div>
+                <div class="cart-meta">${escapeHtml(p.category || '-')} • ${money(p.price || 0)} • คงเหลือ ${Number(p.stock ?? 0)}</div>
               </div>
               <div class="cart-right">
                 <button class="remove-btn" data-delete-id="${snap.id}">ลบสินค้า</button>
@@ -77,18 +96,17 @@ const renderList = () => {
 };
 
 const bindForm = () => {
-  const form = document.getElementById('admin-product-form');
+  const form = document.getElementById('admin-form');
   if (!form) return;
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-
-    const name = document.getElementById('admin-product-name')?.value.trim();
-    const category = document.getElementById('admin-product-category')?.value || 'อื่น ๆ';
-    const price = Number(document.getElementById('admin-product-price')?.value || 0);
-    const stock = Number(document.getElementById('admin-product-stock')?.value || 0);
-    const description = document.getElementById('admin-product-description')?.value.trim() || '';
-    const imageUrl = document.getElementById('admin-product-image-url')?.value.trim() || '';
+    const name = document.getElementById('product-name')?.value || '';
+    const category = document.getElementById('product-category')?.value || '';
+    const price = document.getElementById('product-price')?.value || '';
+    const stock = document.getElementById('product-stock')?.value || '';
+    const description = document.getElementById('product-description')?.value || '';
+    const imageUrl = document.getElementById('product-image')?.value || '';
 
     if (!name) {
       setStatus('กรุณากรอกชื่อสินค้า', true);
@@ -114,6 +132,69 @@ const bindForm = () => {
   });
 };
 
+const renderOrders = () => {
+  const list = document.getElementById('admin-orders-list');
+  if (!list) return;
+
+  const renderRows = (snapshot) => {
+    if (snapshot.empty) {
+      list.innerHTML = '<div class="empty-products">ยังไม่มีรายการออเดอร์</div>';
+      return;
+    }
+
+    list.innerHTML = snapshot.docs
+      .map((snap) => {
+        const order = snap.data();
+        const items = Array.isArray(order.items) ? order.items : [];
+        const itemCount = items.reduce((sum, item) => sum + Number(item?.qty || 0), 0);
+        const itemLines =
+          items.length > 0
+            ? items
+                .slice(0, 3)
+                .map((item) => `${escapeHtml(item?.name || '-')} x${Number(item?.qty || 0)}`)
+                .join(', ')
+            : 'ไม่มีรายการสินค้า';
+
+        const subtotal = Number(order.subtotal ?? order.total ?? 0);
+        const shipping = Number(order.shipping ?? 0);
+        const vat = Number(order.vat ?? 0);
+        const total = Number(order.total ?? subtotal + shipping + vat);
+
+        return `
+          <div class="cart-item">
+            <div>
+              <div class="cart-name">${escapeHtml(order.customerName || 'ไม่ระบุชื่อลูกค้า')}</div>
+              <div class="cart-meta">รหัสออเดอร์: ${snap.id}</div>
+              <div class="cart-meta">วันที่สั่งซื้อ: ${formatDateTime(order.createdAt)}</div>
+              <div class="cart-meta">ชำระเงิน: ${escapeHtml(order.paymentMethod || '-')} • จำนวนสินค้า ${itemCount} ชิ้น</div>
+              <div class="cart-meta">ยอดสินค้า ${money(subtotal)} • ค่าส่ง ${money(shipping)} • VAT ${money(vat)} • รวม ${money(total)}</div>
+              <div class="cart-meta">รายการ: ${itemLines}${items.length > 3 ? ` และอีก ${items.length - 3} รายการ` : ''}</div>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+  };
+
+  const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'), limit(20));
+  onSnapshot(
+    q,
+    renderRows,
+    async (err) => {
+      // fallback for legacy docs that may not have createdAt
+      if (String(err?.message || '').includes('index') || String(err?.message || '').includes('createdAt')) {
+        const fallbackQuery = query(collection(db, 'orders'), limit(20));
+        onSnapshot(fallbackQuery, renderRows, (fallbackErr) => {
+          setStatus(`โหลดออเดอร์ไม่สำเร็จ: ${fallbackErr.message}`, true);
+        });
+        return;
+      }
+
+      setStatus(`โหลดออเดอร์ไม่สำเร็จ: ${err.message}`, true);
+    }
+  );
+};
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.replace('login.html');
@@ -131,4 +212,5 @@ onAuthStateChanged(auth, async (user) => {
 
   bindForm();
   renderList();
+  renderOrders();
 });

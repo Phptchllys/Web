@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopFlow | Admin จัดการสินค้า</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="simple-nav">
+      <div class="container inner">
+        <a class="brand-row" href="index.html"><span class="bag-icon">S</span><span>ShopFlow Admin</span></a>
+        <nav>
+          <a href="index.html">หน้าแรก</a><a class="active" href="admin.html">จัดการสินค้า (Admin)</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container page admin-page">
+      <section class="admin-hero card">
+        <div>
+          <h1>หน้าผู้ดูแลระบบสินค้า</h1>
+          <p class="lead">เพิ่ม / ลบสินค้า และติดตามจำนวนสินค้าที่แสดงบนหน้าแรกได้จากหน้านี้</p>
+        </div>
+        <div class="admin-hero-badge">ADMIN</div>
+      </section>
+
+      <section class="admin-stats">
+        <article class="admin-stat-card">
+          <p class="stat-label">สิทธิ์การใช้งาน</p>
+          <p class="stat-value">ผู้ดูแลระบบ</p>
+          <p class="stat-note">สามารถเพิ่มและลบสินค้าได้</p>
+        </article>
+        <article class="admin-stat-card">
+          <p class="stat-label">การซิงก์ข้อมูล</p>
+          <p class="stat-value">Realtime</p>
+          <p class="stat-note">อัปเดตรายการสินค้าอัตโนมัติ</p>
+        </article>
+        <article class="admin-stat-card">
+          <p class="stat-label">ปลายทางแสดงผล</p>
+          <p class="stat-value">index.html</p>
+          <p class="stat-note">สินค้าจะโชว์ในหน้าแรกทันที</p>
+        </article>
+      </section>
+
+      <section class="admin-layout">
+        <section class="card admin-form-card">
+          <h2>เพิ่มสินค้าใหม่</h2>
+          <form class="form-grid" id="admin-product-form">
+            <label><span>ชื่อสินค้า</span><input id="admin-product-name" type="text" placeholder="เช่น หูฟังไร้สาย" required /></label>
+            <label><span>หมวดหมู่</span><select id="admin-product-category"><option>แฟชั่น</option><option>อิเล็กทรอนิกส์</option><option>บ้านและสวน</option></select></label>
+            <label><span>ราคา (บาท)</span><input id="admin-product-price" type="number" min="0" required /></label>
+            <label><span>สต็อกคงเหลือ</span><input id="admin-product-stock" type="number" min="0" required /></label>
+            <label class="full"><span>ลิงก์รูปภาพสินค้า (URL)</span><input id="admin-product-image-url" type="url" placeholder="https://..." /></label>
+            <label class="full"><span>รายละเอียดสินค้า</span><textarea id="admin-product-description" rows="4" placeholder="รายละเอียดสินค้า"></textarea></label>
+            <button class="btn-primary full" type="submit">เพิ่มสินค้า</button>
+          </form>
+          <p id="admin-status" class="status-message"></p>
+        </section>
+
+        <section class="card admin-list-card">
+          <div class="admin-list-head">
+            <h2>รายการสินค้าทั้งหมด</h2>
+            <span class="admin-list-hint">ล่าสุด 50 รายการ</span>
+          </div>
+          <div id="admin-products-list" class="cart-items">
+            <div class="empty-products">กำลังโหลดสินค้า...</div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="admin-products.js"></script>
+  </body>
+</html>

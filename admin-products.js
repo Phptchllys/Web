@@ -21,6 +21,12 @@ const setStatus = (message, isError = false) => {
   el.classList.toggle('error', isError);
 };
 
+const parseError = (err) => {
+  const code = String(err?.code || '');
+  if (code.includes('permission-denied')) return 'ไม่มีสิทธิ์ดำเนินการ (permission denied)';
+  return err?.message || 'เกิดข้อผิดพลาด';
+};
+
 const money = (n) => `฿${Number(n || 0).toLocaleString('th-TH')}`;
 
 const escapeHtml = (value) =>
@@ -78,8 +84,7 @@ const renderList = () => {
         })
         .join('');
     },
-    (err) => setStatus(`โหลดรายการสินค้าไม่สำเร็จ: ${err.message}`, true)
-  );
+  (err) => setStatus(`โหลดรายการสินค้าไม่สำเร็จ: ${parseError(err)}`, true)  );
 
   list.addEventListener('click', async (e) => {
     const btn = e.target.closest('[data-delete-id]');
@@ -90,26 +95,25 @@ const renderList = () => {
       await deleteDoc(doc(db, 'products', btn.getAttribute('data-delete-id')));
       setStatus('ลบสินค้าเรียบร้อยแล้ว');
     } catch (err) {
-      setStatus(`ลบสินค้าไม่สำเร็จ: ${err.message}`, true);
+     (err) => setStatus(`โหลดรายการสินค้าไม่สำเร็จ: ${parseError(err)}`, true)
     }
   });
 };
 
 const bindForm = () => {
-  const form = document.getElementById('admin-form');
-  if (!form) return;
+const form = document.getElementById('admin-product-form');  if (!form) return;
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('product-name')?.value || '';
-    const category = document.getElementById('product-category')?.value || '';
-    const price = document.getElementById('product-price')?.value || '';
-    const stock = document.getElementById('product-stock')?.value || '';
-    const description = document.getElementById('product-description')?.value || '';
-    const imageUrl = document.getElementById('product-image')?.value || '';
+     const name = document.getElementById('admin-product-name')?.value.trim() || '';
+    const category = document.getElementById('admin-product-category')?.value || '';
+    const price = Number(document.getElementById('admin-product-price')?.value || 0);
+    const stock = Number(document.getElementById('admin-product-stock')?.value || 0);
+    const description = document.getElementById('admin-product-description')?.value.trim() || '';
+    const imageUrl = document.getElementById('admin-product-image-url')?.value.trim() || '';
 
-    if (!name) {
-      setStatus('กรุณากรอกชื่อสินค้า', true);
+    if (!Number.isFinite(price) || price < 0 || !Number.isFinite(stock) || stock < 0) {
+      setStatus('ราคาและสต็อกต้องเป็นตัวเลขที่มากกว่าหรือเท่ากับ 0', true);
       return;
     }
 
@@ -127,7 +131,7 @@ const bindForm = () => {
       form.reset();
       setStatus('เพิ่มสินค้าเรียบร้อยแล้ว');
     } catch (err) {
-      setStatus(`เพิ่มสินค้าไม่สำเร็จ: ${err.message}`, true);
+      setStatus(`เพิ่มสินค้าไม่สำเร็จ: ${parseError(err)}`, true);
     }
   });
 };
@@ -185,12 +189,12 @@ const renderOrders = () => {
       if (String(err?.message || '').includes('index') || String(err?.message || '').includes('createdAt')) {
         const fallbackQuery = query(collection(db, 'orders'), limit(20));
         onSnapshot(fallbackQuery, renderRows, (fallbackErr) => {
-          setStatus(`โหลดออเดอร์ไม่สำเร็จ: ${fallbackErr.message}`, true);
+           setStatus(`โหลดออเดอร์ไม่สำเร็จ: ${parseError(fallbackErr)}`, true);
         });
         return;
       }
 
-      setStatus(`โหลดออเดอร์ไม่สำเร็จ: ${err.message}`, true);
+       setStatus(`โหลดออเดอร์ไม่สำเร็จ: ${parseError(err)}`, true);
     }
   );
 };
